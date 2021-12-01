@@ -19,6 +19,9 @@ export class HeroService {
   constructor(
     private http: HttpClient,
     private messageService: MessageService) { }
+    httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    };
 
     getHeroes(): Observable<Hero[]> {
       return this.http.get<Hero[]>(this.heroesUrl)
@@ -33,7 +36,13 @@ export class HeroService {
         tap(_ => this.log(`fetched hero id=${id}`)),
         catchError(this.handleError<Hero>(`getHero id=${id}`))
       );
-  }
+    }
+    updateHero(hero:Hero):Observable<any>{
+      return this.http.put(this.heroesUrl,hero,this.httpOptions).pipe(
+        tap(_=>this.log(`updateed hero id=${hero.id}`)),
+        catchError(this.handleError<any>('update?Hero'))
+      )
+    }
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
   
